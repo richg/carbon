@@ -179,7 +179,7 @@ class CarbonCacheOptions(usage.Options):
         # Use provided pidfile (if any) as default for configuration. If it's
         # set to 'twistd.pid', that means no value was provided and the default
         # was used.
-        pidfile = self.parent["pidfile"]
+        pidfile = self.parent["pidfile"] if self.parent.has_key("pidfile") else "twistd.pid"
         if pidfile.endswith("twistd.pid"):
             pidfile = None
         self["pidfile"] = pidfile

@@ -6,13 +6,13 @@ try:
 except ImportError:
     RUSAGE_SELF = 0
 
-    class rusage(object):
+    class _rusage(object):
         def __init__(self):
             self.ru_utime = 0.0
             self.ru_stime = 0.0
 
     def getrusage(who=0):
-        return rusage()
+        return _rusage()
 
 
 from twisted.application.service import Service

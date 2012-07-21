@@ -2,7 +2,10 @@ import time
 from sys import stdout, stderr
 from zope.interface import implements
 from twisted.python.log import startLoggingWithObserver, textFromEventDict, msg, err, ILogObserver
-from twisted.python.syslog import SyslogObserver
+try:
+    from twisted.python.syslog import SyslogObserver
+except ImportError, e:
+    SyslogObserver = None
 from twisted.python.logfile import DailyLogFile
 
 

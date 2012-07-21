@@ -1,7 +1,10 @@
 import copy
 import os
-import pwd
 import sys
+try:
+    import pwd
+except ImportError, e:
+    pwd = None
 
 from os.path import abspath, basename, dirname
 try:
@@ -18,8 +21,10 @@ except:
 from time import time
 from twisted.python.util import initgroups
 from twisted.scripts.twistd import runApp
-from twisted.scripts._twistd_unix import daemonize
-
+try:
+    from twisted.scripts._twistd_unix import daemonize
+except ImportError, e:
+    daemonize = None
 
 daemonize = daemonize  # Backwards compatibility
 

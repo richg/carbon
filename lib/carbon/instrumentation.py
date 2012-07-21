@@ -1,7 +1,19 @@
 import os
 import time
 import socket
-from resource import getrusage, RUSAGE_SELF
+try:
+    from resource import getrusage, RUSAGE_SELF
+except ImportError:
+    RUSAGE_SELF = 0
+
+    class rusage(object):
+        def __init__(self):
+            self.ru_utime = 0.0
+            self.ru_stime = 0.0
+
+    def getrusage(who=0):
+        return rusage()
+
 
 from twisted.application.service import Service
 from twisted.internet.task import LoopingCall
@@ -10,7 +22,7 @@ from carbon.conf import settings
 
 stats = {}
 HOSTNAME = socket.gethostname().replace('.','_')
-PAGESIZE = os.sysconf('SC_PAGESIZE')
+PAGESIZE = os.sysconf('SC_PAGESIZE') if hasattr(os, 'sysconf') else 0
 rusage = getrusage(RUSAGE_SELF)
 lastUsage = rusage.ru_utime + rusage.ru_stime
 lastUsageTime = time.time()

@@ -14,7 +14,10 @@ limitations under the License."""
 
 import os
 import sys
-import pwd
+try:
+    import pwd
+except ImportError, e:
+    pwd = None
 import errno
 
 from os.path import join, dirname, normpath, exists, isdir

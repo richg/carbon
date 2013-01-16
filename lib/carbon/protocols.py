@@ -13,6 +13,9 @@ class MetricReceiver:
   """ Base class for all metric receiving protocols, handles flow
   control events and connection state logging.
   """
+
+  METRIC_RECEIVED_EVENT = events.metricReceived
+
   def connectionMade(self):
     self.peerName = self.getPeerName()
     log.listener("%s connection with %s established" % (self.__class__.__name__, self.peerName))
@@ -59,8 +62,7 @@ class MetricReceiver:
     if int(datapoint[0]) == -1:  # use current time if none given
       datapoint = (time.time(), datapoint[1])
 
-    events.metricReceived(metric, datapoint)
-
+    self.METRIC_RECEIVED_EVENT(metric, datapoint)
 
 class MetricLineReceiver(MetricReceiver, LineOnlyReceiver):
   delimiter = '\n'
@@ -75,6 +77,13 @@ class MetricLineReceiver(MetricReceiver, LineOnlyReceiver):
 
     self.metricReceived(metric, datapoint)
 
+class CacheMetricLineReceiver(MetricLineReceiver):
+  METRIC_RECEIVED_EVENT = events.CacheMetricReceived
+  pass
+
+class AggregatorMetricLineReceiver(MetricLineReceiver):
+  METRIC_RECEIVED_EVENT = events.AggregatorMetricReceived
+  pass
 
 class MetricDatagramReceiver(MetricReceiver, DatagramProtocol):
   def datagramReceived(self, data, (host, port)):
@@ -87,6 +96,13 @@ class MetricDatagramReceiver(MetricReceiver, DatagramProtocol):
       except:
         log.listener('invalid line received from %s, ignoring' % host)
 
+class CacheMetricDatagramReceiver(MetricDatagramReceiver):
+  METRIC_RECEIVED_EVENT = events.CacheMetricReceived
+  pass
+
+class AggregatorMetricDatagramReceiver(MetricDatagramReceiver):
+  METRIC_RECEIVED_EVENT = events.AggregatorMetricReceived
+  pass
 
 class MetricPickleReceiver(MetricReceiver, Int32StringReceiver):
   MAX_LENGTH = 2 ** 20
@@ -114,6 +130,13 @@ class MetricPickleReceiver(MetricReceiver, Int32StringReceiver):
 
       self.metricReceived(metric, datapoint)
 
+class CacheMetricPickleReceiver(MetricPickleReceiver):
+  METRIC_RECEIVED_EVENT = events.CacheMetricReceived
+  pass
+
+class AggregatorMetricPickleReceiver(MetricPickleReceiver):
+  METRIC_RECEIVED_EVENT = events.AggregatorMetricReceived
+  pass
 
 class CacheManagementHandler(Int32StringReceiver):
   def connectionMade(self):

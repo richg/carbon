@@ -345,3 +345,41 @@ MAX_AGGREGATION_INTERVALS = 5
 # seconds. Set CARBON_METRIC_INTERVAL to 0 to disable instrumentation
 # CARBON_METRIC_PREFIX = carbon
 # CARBON_METRIC_INTERVAL = 60
+
+[combined]
+
+CACHE_LINE_RECEIVER_INTERFACE = 127.0.0.1
+CACHE_LINE_RECEIVER_PORT = 2003
+
+CACHE_PICKLE_RECEIVER_INTERFACE = 127.0.0.1
+CACHE_PICKLE_RECEIVER_PORT = 2004
+
+# Set this to True to enable the UDP listener. By default this is off
+# because it is very common to run multiple carbon daemons and managing
+# another (rarely used) port for every carbon instance is not fun.
+ENABLE_UDP_LISTENER = False
+CACHE_UDP_RECEIVER_INTERFACE = 0.0.0.0
+CACHE_UDP_RECEIVER_PORT = 2003
+
+AGGREGATOR_LINE_RECEIVER_INTERFACE = 127.0.0.1
+AGGREGATOR_LINE_RECEIVER_PORT = 2023
+
+AGGREGATOR_PICKLE_RECEIVER_INTERFACE = 127.0.0.1
+AGGREGATOR_PICKLE_RECEIVER_PORT = 2024
+
+# DESTINATIONS:
+# This is a list of carbon daemons we will send any aggregator-generated
+# metrics to.
+#
+# Single carbon-cache example:
+# DESTINATIONS = 127.0.0.1:2004
+#
+# Multiple carbon-cache instances example:
+# DESTINATIONS = 127.0.0.1:2004:a, 127.0.0.1:2104:b
+#
+# The format is comma-delimited IP:PORT:INSTANCE where the :INSTANCE part is
+# optional and refers to the "None" instance if omitted.
+#
+# If this is not set (the default), aggregator-generated metrics
+# are simly added to the Cache in process
+# DESTINATIONS = 127.0.0.1:2004

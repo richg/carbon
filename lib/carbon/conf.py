@@ -363,6 +363,9 @@ class CarbonAggregatorOptions(CarbonCacheOptions):
         settings["rewrite-rules"] = self["rewrite-rules"]
 
 
+class CarbonCombinedOptions(CarbonAggregatorOptions):
+    pass
+
 class CarbonRelayOptions(CarbonCacheOptions):
 
     optParameters = [
@@ -428,7 +431,7 @@ def get_default_parser(usage="%prog [options] <start|stop|status>"):
 
 def get_parser(name):
     parser = get_default_parser()
-    if name == "carbon-aggregator":
+    if name in ("carbon-aggregator", "carbon-combined"):
         parser.add_option(
             "--rules",
             default=None,

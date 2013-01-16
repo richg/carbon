@@ -80,9 +80,13 @@ def recordMetrics():
   myStats = stats.copy()
   stats.clear()
 
+  # Set the record up front in the case of carbon-combined
+  record = combined_record if settings.program == 'carbon-combined' else None
+
   # cache metrics
-  if settings.program == 'carbon-cache':
-    record = cache_record
+  if settings.program in ('carbon-cache','carbon-combined'):
+    if not record:
+      record = cache_record
     updateTimes = myStats.get('updateTimes', [])
     committedPoints = myStats.get('committedPoints', 0)
     creates = myStats.get('creates', 0)
@@ -108,15 +112,16 @@ def recordMetrics():
     record('cache.overflow', cacheOverflow)
 
   # aggregator metrics
-  elif settings.program == 'carbon-aggregator':
-    record = aggregator_record
+  if settings.program in ('carbon-aggregator', 'carbon-combined'):
+    if not record:
+      record = aggregator_record
     record('allocatedBuffers', len(BufferManager))
     record('bufferedDatapoints',
            sum([b.size for b in BufferManager.buffers.values()]))
     record('aggregateDatapointsSent', myStats.get('aggregateDatapointsSent', 0))
 
   # relay metrics
-  else:
+  if not record:
     record = relay_record
 
   # common metrics
@@ -155,6 +160,14 @@ def aggregator_record(metric, value):
     datapoint = (time.time(), value)
     events.metricGenerated(fullMetric, datapoint)
 
+def combined_record(metric, value):
+    prefix = settings.CARBON_METRIC_PREFIX
+    if settings.instance is None:
+      fullMetric = '%s.combined.%s.%s' % (prefix, HOSTNAME, metric)
+    else:
+      fullMetric = '%s.combined.%s-%s.%s' % (prefix, HOSTNAME, settings.instance, metric)
+    datapoint = (time.time(), value)
+    cache.MetricCache.store(fullMetric, datapoint)
 
 class InstrumentationService(Service):
     def __init__(self):

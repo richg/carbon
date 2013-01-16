@@ -23,6 +23,8 @@ class Event:
 
 
 metricReceived = Event('metricReceived')
+CacheMetricReceived = Event('CacheMetricReceived')
+AggregatorMetricReceived = Event('AggregatorMetricReceived')
 metricGenerated = Event('metricGenerated')
 cacheFull = Event('cacheFull')
 cacheSpaceAvailable = Event('cacheSpaceAvailable')

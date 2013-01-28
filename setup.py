@@ -40,6 +40,12 @@ setup(
   scripts=glob('bin/*'),
   package_data={ 'carbon' : ['*.xml'] },
   data_files=install_files,
-  install_requires=['twisted==11.1.0', 'whisper==0.9.10', 'txamqp'],
+  install_requires=[
+      'twisted==11.1.0',
+      'whisper==0.9.10-warden',
+      'txamqp'],
+  dependency_links = [
+      'http://github.com/richg/whisper/tarball/0.9.x-warden#egg=whisper-0.9.10-warden',
+  ],
   **setup_kwargs
 )
